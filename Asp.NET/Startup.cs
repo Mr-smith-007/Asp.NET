@@ -1,3 +1,4 @@
+using Asp.NET.MiddleWares;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
@@ -40,26 +41,9 @@ namespace Asp.NET
                 app.UseDeveloperExceptionPage();
             }
 
-            app.UseRouting();
+            app.UseRouting();            
 
-            app.Use(async (context, next) =>
-            {
-                string logMessage = $"[{DateTime.Now}]: New request to http://{context.Request.Host.Value + context.Request.Path}{Environment.NewLine}";
-
-                string logFilePath = Path.Combine(env.ContentRootPath, "Logs", "RequestLog.txt");
-
-                await File.AppendAllTextAsync(logFilePath, logMessage);
-
-                await next.Invoke();
-            });
-
-
-            app.Use(async (context, next) =>
-            {
-                Console.WriteLine($"[{DateTime.Now}]: New request to http://{context.Request.Host.Value + context.Request.Path}");
-                await next.Invoke();
-            });
-
+            app.UseMiddleware<LoggingMiddleware>();
 
             app.UseEndpoints(endpoints =>
             {
