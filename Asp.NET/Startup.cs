@@ -12,6 +12,13 @@ namespace Asp.NET
 {
     public class Startup
     {
+        static void About(IApplicationBuilder app)
+        {
+            app.Run(async context =>
+            {
+                await context.Response.WriteAsync($"{env.ApplicationName} - ASP.Net Core tutorial project");
+            });
+        }
         // This method gets called by the runtime. Use this method to add services to the container.
         // For more information on how to configure your application, visit https://go.microsoft.com/fwlink/?LinkID=398940
         public void ConfigureServices(IServiceCollection services)
@@ -28,13 +35,31 @@ namespace Asp.NET
 
             app.UseRouting();
 
+            app.Use(async (context, next) =>
+            {                
+                Console.WriteLine($"[{DateTime.Now}]: New request to http://{context.Request.Host.Value + context.Request.Path}");
+                await next.Invoke();
+            });
+
             app.UseEndpoints(endpoints =>
             {
-                endpoints.MapGet("/", async context =>
+                endpoints.MapGet("/config", async context =>
                 {
-                    await context.Response.WriteAsync("Hello World!");
+                    await context.Response.WriteAsync($"App name: {env.ApplicationName}. App running configuration: {env.EnvironmentName}");
                 });
             });
+
+            app.Map("/about", About);
+
+            app.Run(async (context) =>
+            {
+                await context.Response.WriteAsync($"Welcome to the {env.ApplicationName}!");
+            });
+                        
         }
+
+        
     }
+
+
 }
