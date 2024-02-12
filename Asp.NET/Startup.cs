@@ -19,6 +19,14 @@ namespace Asp.NET
                 await context.Response.WriteAsync($"{env.ApplicationName} - ASP.Net Core tutorial project");
             });
         }
+
+        private static void Config(IApplicationBuilder app)
+        {
+            app.Run(async context =>
+            {
+                await context.Response.WriteAsync($"App name: {env.ApplicationName}. App running configuration: {env.EnvironmentName}");
+            });
+        }
         // This method gets called by the runtime. Use this method to add services to the container.
         // For more information on how to configure your application, visit https://go.microsoft.com/fwlink/?LinkID=398940
         public void ConfigureServices(IServiceCollection services)
@@ -41,21 +49,23 @@ namespace Asp.NET
                 await next.Invoke();
             });
 
+
             app.UseEndpoints(endpoints =>
             {
-                endpoints.MapGet("/config", async context =>
+                endpoints.MapGet("/", async context =>
                 {
-                    await context.Response.WriteAsync($"App name: {env.ApplicationName}. App running configuration: {env.EnvironmentName}");
+                    await context.Response.WriteAsync($"Welcome to the {env.ApplicationName}!");
                 });
             });
 
             app.Map("/about", About);
+            app.Map("/config", Config);
 
             app.Run(async (context) =>
             {
-                await context.Response.WriteAsync($"Welcome to the {env.ApplicationName}!");
+                await context.Response.WriteAsync($"Page not found");
             });
-                        
+
         }
 
         
