@@ -39,13 +39,15 @@ namespace Asp.NET
 
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
         {
+            Console.WriteLine($"Launching project from: {env.ContentRootPath}");
             _env = env;
             if (env.IsDevelopment() || env.IsStaging())
             {
                 app.UseDeveloperExceptionPage();
             }
 
-            app.UseRouting();            
+            app.UseRouting();
+            app.UseStaticFiles();
 
             app.UseMiddleware<LoggingMiddleware>();
 
@@ -60,10 +62,12 @@ namespace Asp.NET
             app.Map("/about", About);
             app.Map("/config", Config);
 
-            app.Run(async (context) =>
-            {
-                await context.Response.WriteAsync($"Page not found");
-            });
+            app.UseStatusCodePages();
+
+            //app.Run(async (context) =>
+            //{                
+            //    await context.Response.WriteAsync($"Page not found");
+            //});
 
         }
 
