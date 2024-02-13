@@ -14,11 +14,14 @@ namespace Asp.NET
 {
     public class Startup
     {
+        static IWebHostEnvironment _env;
+
+       
         private static void About(IApplicationBuilder app)
         {
             app.Run(async context =>
             {
-                await context.Response.WriteAsync($"{env.ApplicationName} - ASP.Net Core tutorial project");
+                await context.Response.WriteAsync($"{_env.ApplicationName} - ASP.Net Core tutorial project");
             });
         }
 
@@ -26,7 +29,7 @@ namespace Asp.NET
         {
             app.Run(async context =>
             {
-                await context.Response.WriteAsync($"App name: {env.ApplicationName}. App running configuration: {env.EnvironmentName}");
+                await context.Response.WriteAsync($"App name: {_env.ApplicationName}. App running configuration: {_env.EnvironmentName}");
             });
         }
 
@@ -36,6 +39,7 @@ namespace Asp.NET
 
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
         {
+            _env = env;
             if (env.IsDevelopment() || env.IsStaging())
             {
                 app.UseDeveloperExceptionPage();
